@@ -35,8 +35,15 @@ async def run_sync() -> None:
                 synced += 1
 
                 event_changed = event.get("changed_at", "")
-                if event_changed and event_changed > latest_changed_at:
-                    latest_changed_at = event_changed
+                if event_changed:
+
+                    try:
+                        dt_new = datetime.fromisoformat(event_changed).replace(tzinfo=None)
+                        dt_current = datetime.fromisoformat(latest_changed_at).replace(tzinfo=None)
+                        if dt_new > dt_current:
+                            latest_changed_at = dt_new.isoformat()
+                    except (ValueError, TypeError):
+                        pass
             await sync_repo.update(
                 last_sync_time=datetime.now(),
                 last_changed_at=latest_changed_at,

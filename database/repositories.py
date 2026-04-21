@@ -3,6 +3,7 @@ from typing import Any
 
 
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -33,7 +34,7 @@ class EventRepository:
         limit: int = 20,
     ) -> tuple[int, list[Event]]:
 
-        query = select(Event)
+        query = select(Event).options(selectinload(Event.place))
         count_query = select(Event)
 
         if date_from:
