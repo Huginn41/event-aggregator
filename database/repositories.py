@@ -9,6 +9,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.models import Event, Place, Ticket, SyncData
 
 
+def parse_dt(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value)
+    except (ValueError, TypeError):
+        return None
+
+
 class EventRepository:
     def __init__(self, session: AsyncSession):
         self._session = session
@@ -57,8 +66,8 @@ class EventRepository:
                 city=place_data["city"],
                 address=place_data["address"],
                 seats_pattern=place_data.get("seats_pattern"),
-                changed_at=place_data.get("changed_at"),
-                created_at=place_data.get("created_at"),
+                changed_at=parse_dt(place_data.get("changed_at")),
+                created_at=parse_dt(place_data.get("created_at")),
             )
             .on_conflict_do_update(
                 index_elements=["id"],
@@ -67,7 +76,7 @@ class EventRepository:
                     "city": place_data["city"],
                     "address": place_data["address"],
                     "seats_pattern": place_data.get("seats_pattern"),
-                    "changed_at": place_data.get("changed_at"),
+                    "changed_at": parse_dt(place_data.get("changed_at")),
                 },
             )
         )
@@ -79,25 +88,25 @@ class EventRepository:
                 id=event_data["id"],
                 name=event_data["name"],
                 place_id=place_data["id"],
-                event_time=event_data.get("event_time"),
-                registration_deadline=event_data.get("registration_deadline"),
+                event_time=parse_dt(event_data.get("event_time")),
+                registration_deadline=parse_dt(event_data.get("registration_deadline")),
                 status=event_data.get("status", "new"),
                 number_of_visitors=event_data.get("number_of_visitors", 0),
-                changed_at=event_data.get("changed_at"),
-                created_at=event_data.get("created_at"),
-                status_changed_at=event_data.get("status_changed_at"),
+                changed_at=parse_dt(event_data.get("changed_at")),
+                created_at=parse_dt(event_data.get("created_at")),
+                status_changed_at=parse_dt(event_data.get("status_changed_at")),
             )
             .on_conflict_do_update(
                 index_elements=["id"],
                 set_={
                     "name": event_data["name"],
                     "place_id": place_data["id"],
-                    "event_time": event_data.get("event_time"),
-                    "registration_deadline": event_data.get("registration_deadline"),
+                    "event_time": parse_dt(event_data.get("event_time")),
+                    "registration_deadline": parse_dt(event_data.get("registration_deadline")),
                     "status": event_data.get("status", "new"),
                     "number_of_visitors": event_data.get("number_of_visitors", 0),
-                    "changed_at": event_data.get("changed_at"),
-                    "status_changed_at": event_data.get("status_changed_at"),
+                    "changed_at": parse_dt(event_data.get("changed_at")),
+                    "status_changed_at": parse_dt(event_data.get("status_changed_at")),
                 },
             )
         )
