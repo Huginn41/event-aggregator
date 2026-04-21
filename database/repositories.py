@@ -23,7 +23,7 @@ class EventRepository:
     def __init__(self, session: AsyncSession):
         self._session = session
 
-    async def get_by_id(self, event_id) -> Event | None:
+    async def get(self, event_id) -> Event | None:
         result = await self._session.execute(
             select(Event)
             .options(selectinload(Event.place))  # добавить
@@ -123,7 +123,7 @@ class TicketRepository:
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
-    async def register(
+    async def create(
         self,
         ticket_id: str,
         event_id: str,
@@ -146,14 +146,14 @@ class TicketRepository:
         await self._session.commit()
         return ticket
 
-    async def ticket_by_id(self, ticket_id) -> Ticket | None:
+    async def get(self, ticket_id) -> Ticket | None:
         result = await self._session.execute(
             select(Ticket).where(Ticket.id == ticket_id)
         )
         return result.scalar_one_or_none()
 
-    async def unregiser(self, ticket_id: str) -> None:
-        ticket = await self.ticket_by_id(ticket_id)
+    async def delete(self, ticket_id: str) -> None:
+        ticket = await self.get(ticket_id)
         if ticket:
             await self._session.delete(ticket)
             await self._session.commit()

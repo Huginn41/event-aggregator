@@ -123,7 +123,7 @@ async def list_events(
 @router.get("/events/{event_id}", response_model=EventDetail)
 async def get_event(event_id: str, db: AsyncSession = Depends(get_session)):
     repo = EventRepository(db)
-    event = await repo.get_by_id(event_id)
+    event = await repo.get(event_id)
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
 
