@@ -1,6 +1,7 @@
 from typing import Any
 
 import httpx
+from urllib.parse import quote
 
 from core.config import settings
 
@@ -20,14 +21,15 @@ class EventsProviderClient:
     async def events(
         self, changed_at: str, cursor: str | None = None
     ) -> dict[str, Any]:
-        params: dict[str, str] = {"changed_at": changed_at}
+
+        encoded = quote(changed_at, safe='+:')
+        query = f"changed_at={encoded}"
         if cursor:
-            params["cursor"] = cursor
+            query += f"&cursor={quote(cursor, safe='+:')}"
 
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{self._base_url}/api/events/",
-                params=params,
+                f"{self._base_url}/api/events/?{query}",
                 headers=self._headers(),
                 follow_redirects=True,
             )
