@@ -100,6 +100,8 @@ class EventRepository:
         await self._session.execute(event_update)
         await self._session.commit()
 
+    
+
 
 class TicketRepository:
     def __init__(self, session: AsyncSession) -> None:
