@@ -31,7 +31,7 @@ class Place(Base):
     name: Mapped[str] = mapped_column(String, nullable=False)
     city: Mapped[str] = mapped_column(String, nullable=False)
     address: Mapped[str] = mapped_column(String, nullable=False)
-    seats_pattern: Mapped[str] = mapped_column(String, nullable=False)
+    seats_pattern: Mapped[str] = mapped_column(String, nullable=True)
     changed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -88,6 +88,10 @@ class Event(Base):
         back_populates="event",
         cascade="all, delete-orphan",
     )
+    place_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("places.id"),
+        nullable=False,
+    )
     place: Mapped["Place"] = relationship(back_populates="events")
 
 
@@ -103,9 +107,9 @@ class Ticket(Base):
     email: Mapped[str] = mapped_column(String, nullable=False)
     seat: Mapped[str] = mapped_column(String, nullable=False)
 
-    created_at: Mapped[str] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
-    event_id: Mapped[str] = mapped_column(
+    event_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("events.id"),
         nullable=False,
     )
@@ -117,14 +121,15 @@ class SyncData(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=False),
-        primary_key=True
+        primary_key=True,
+        default=uuid.uuid4
     )
-    last_sync_time: Mapped[DateTime] = mapped_column(
+    last_sync_time: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
-        nullable=False
+        nullable=True,
     )
-    last_changed_at: Mapped[DateTime] = mapped_column(
-        DateTime(timezone=True),
-        nullable=False
+    last_changed_at: Mapped[str | None] = mapped_column(
+        String,
+        nullable=True,
     )
     sync_status: Mapped[str] = mapped_column(String, nullable=False)
