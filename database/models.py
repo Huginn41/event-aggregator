@@ -1,4 +1,3 @@
-
 from datetime import datetime
 import uuid
 from sqlalchemy import (
@@ -107,7 +106,9 @@ class Ticket(Base):
     email: Mapped[str] = mapped_column(String, nullable=False)
     seat: Mapped[str] = mapped_column(String, nullable=False)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
 
     event_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("events.id"),
@@ -120,9 +121,7 @@ class SyncData(Base):
     __tablename__ = "sync_data"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=False),
-        primary_key=True,
-        default=uuid.uuid4
+        UUID(as_uuid=False), primary_key=True, default=uuid.uuid4
     )
     last_sync_time: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
