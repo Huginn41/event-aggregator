@@ -170,6 +170,14 @@ class SyncMetadataRepository:
             sync_data = SyncData(sync_status="pending")
             self._session.add(sync_data)
             await self._session.commit()
+        else:
+
+            if sync_data.last_changed_at:
+                try:
+                    dt = datetime.fromisoformat(sync_data.last_changed_at).replace(microsecond=0)
+                    sync_data.last_changed_at = dt.isoformat()
+                except (ValueError, TypeError):
+                    pass
         return sync_data
 
     async def update(
