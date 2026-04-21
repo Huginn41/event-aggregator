@@ -24,7 +24,11 @@ class EventRepository:
         self._session = session
 
     async def get_by_id(self, event_id) -> Event | None:
-        result = await self._session.execute(select(Event).where(Event.id == event_id))
+        result = await self._session.execute(
+            select(Event)
+            .options(selectinload(Event.place))  # добавить
+            .where(Event.id == event_id)
+        )
         return result.scalar_one_or_none()
 
     async def event_list(

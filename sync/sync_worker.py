@@ -38,8 +38,8 @@ async def run_sync() -> None:
                 if event_changed:
 
                     try:
-                        dt_new = datetime.fromisoformat(event_changed).replace(tzinfo=None)
-                        dt_current = datetime.fromisoformat(latest_changed_at).replace(tzinfo=None)
+                        dt_new = datetime.fromisoformat(event_changed).replace(microsecond=0)
+                        dt_current = datetime.fromisoformat(latest_changed_at).replace(microsecond=0)
                         if dt_new > dt_current:
                             latest_changed_at = dt_new.isoformat()
                     except (ValueError, TypeError):
