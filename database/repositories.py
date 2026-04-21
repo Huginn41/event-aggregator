@@ -67,7 +67,7 @@ class EventRepository:
                     "city": place_data["city"],
                     "address": place_data["address"],
                     "seats_pattern": place_data.get("seats_pattern"),
-                    "created_at": place_data.get("created_at"),
+                    "changed_at": place_data.get("changed_at"),
                 },
             )
         )
