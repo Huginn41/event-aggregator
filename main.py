@@ -6,14 +6,12 @@ import asyncio
 from fastapi import FastAPI
 
 from api.router import router
-from core.config import settings
-from database.db import engine
-from database.models import Base
 
 from sync.sync_worker import run_sync
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 async def sync_loop():
     while True:

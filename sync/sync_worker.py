@@ -10,6 +10,7 @@ from provider.paginator import INITIAL_CHANGED_AT, EventsPaginator
 
 logger = logging.getLogger(__name__)
 
+
 async def run_sync() -> None:
     logger.info("Starting events sync...")
     async with async_session() as session:
@@ -47,4 +48,3 @@ async def run_sync() -> None:
             await sync_repo.update(sync_status="error")
             logger.exception("Sync failed: %s", exc)
             raise
-

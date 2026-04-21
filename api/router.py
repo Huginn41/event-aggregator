@@ -12,16 +12,31 @@ from fastapi import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.schemas import HealthResponse, SyncResponse, EventsListResponse, EventDetail, SeatsResponse, \
-    CreateTicketResponse, CreateTicketRequest, CancelTicketResponse
-from api.usecases import GetSeatsUsecase, EventNotFound, EventNotPublished, CreateTicketUsecase, CancelTicketUsecase, \
-    TicketNotFound
+from api.schemas import (
+    HealthResponse,
+    SyncResponse,
+    EventsListResponse,
+    EventDetail,
+    SeatsResponse,
+    CreateTicketResponse,
+    CreateTicketRequest,
+    CancelTicketResponse,
+)
+from api.usecases import (
+    GetSeatsUsecase,
+    EventNotFound,
+    EventNotPublished,
+    CreateTicketUsecase,
+    CancelTicketUsecase,
+    TicketNotFound,
+)
 from database.db import get_session
 from database.repositories import EventRepository, TicketRepository
 from provider.client import EventsProviderClient
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
 
 def _pagination_url(request: Request, page: int, page_size: int):
     base = str(request.base_url).rstrip("/")
@@ -60,10 +75,14 @@ async def list_events(
         try:
             parsed_date = datetime.strptime(date_from, "%Y-%m-%d")
         except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid date_from format. Use YYYY-MM-DD.")
+            raise HTTPException(
+                status_code=400, detail="Invalid date_from format. Use YYYY-MM-DD."
+            )
 
     offset = (page - 1) * page_size
-    total, events = await repo.event_list(date_from=parsed_date, offset=offset, limit=page_size)
+    total, events = await repo.event_list(
+        date_from=parsed_date, offset=offset, limit=page_size
+    )
 
     next_url = None
     prev_url = None
@@ -141,8 +160,12 @@ async def get_seats(event_id: str, db: AsyncSession = Depends(get_session)):
     return {"event_id": event_id, "available_seats": seats}
 
 
-@router.post("/tickets", response_model=CreateTicketResponse, status_code=status.HTTP_201_CREATED)
-async def create_ticket(body: CreateTicketRequest, db: AsyncSession = Depends(get_session)):
+@router.post(
+    "/tickets", response_model=CreateTicketResponse, status_code=status.HTTP_201_CREATED
+)
+async def create_ticket(
+    body: CreateTicketRequest, db: AsyncSession = Depends(get_session)
+):
     client = EventsProviderClient()
     event_repo = EventRepository(db)
     ticket_repo = TicketRepository(db)

@@ -9,8 +9,9 @@ INITIAL_CHANGED_AT = "2000-01-01"
 
 
 class EventsPaginator:
-
-    def __init__(self, client: EventsProviderClient, changed_at: str = INITIAL_CHANGED_AT) -> None:
+    def __init__(
+        self, client: EventsProviderClient, changed_at: str = INITIAL_CHANGED_AT
+    ) -> None:
         self._client = client
         self._changed_at = changed_at
 

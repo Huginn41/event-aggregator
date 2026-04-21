@@ -7,9 +7,9 @@ from core.config import settings
 
 class EventsProviderClient:
     def __init__(
-            self,
-            base_url: str | None = None,
-            api_key: str | None = None,
+        self,
+        base_url: str | None = None,
+        api_key: str | None = None,
     ) -> None:
         self._base_url = base_url or settings.events_api_url
         self._api_key = api_key or settings.events_api_key
@@ -17,7 +17,9 @@ class EventsProviderClient:
     def _headers(self):
         return {"x-api-key": self._api_key}
 
-    async def events(self, changed_at: str, cursor: str | None = None) -> dict[str, Any]:
+    async def events(
+        self, changed_at: str, cursor: str | None = None
+    ) -> dict[str, Any]:
         params: dict[str, str] = {"changed_at": changed_at}
         if cursor:
             params["cursor"] = cursor
@@ -54,12 +56,12 @@ class EventsProviderClient:
             return data.get("seats", [])
 
     async def register(
-            self,
-            event_id: str,
-            first_name: str,
-            last_name: str,
-            email: str,
-            seat: str,
+        self,
+        event_id: str,
+        first_name: str,
+        last_name: str,
+        email: str,
+        seat: str,
     ) -> str:
 
         async with httpx.AsyncClient() as client:

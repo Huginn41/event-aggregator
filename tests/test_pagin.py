@@ -63,8 +63,14 @@ async def test_paginator_empty_results():
 @pytest.mark.asyncio
 async def test_paginator_three_pages():
     pages = [
-        {"next": "http://host/?cursor=p2", "results": [{"id": f"e{i}"} for i in range(5)]},
-        {"next": "http://host/?cursor=p3", "results": [{"id": f"e{i}"} for i in range(5, 10)]},
+        {
+            "next": "http://host/?cursor=p2",
+            "results": [{"id": f"e{i}"} for i in range(5)],
+        },
+        {
+            "next": "http://host/?cursor=p3",
+            "results": [{"id": f"e{i}"} for i in range(5, 10)],
+        },
         {"next": None, "results": [{"id": "e10"}]},
     ]
     client = make_client(pages)

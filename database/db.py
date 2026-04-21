@@ -23,5 +23,6 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
             await session.rollback()
             raise
 
+
 class Base(DeclarativeBase):
     pass

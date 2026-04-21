@@ -21,7 +21,9 @@ async def test_events_first_page(client):
     mock_response.raise_for_status = MagicMock()
 
     with patch("httpx.AsyncClient") as mock_http:
-        mock_http.return_value.__aenter__ = AsyncMock(return_value=mock_http.return_value)
+        mock_http.return_value.__aenter__ = AsyncMock(
+            return_value=mock_http.return_value
+        )
         mock_http.return_value.__aexit__ = AsyncMock(return_value=False)
         mock_http.return_value.get = AsyncMock(return_value=mock_response)
 
@@ -38,7 +40,9 @@ async def test_events_with_cursor(client):
     mock_response.raise_for_status = MagicMock()
 
     with patch("httpx.AsyncClient") as mock_http:
-        mock_http.return_value.__aenter__ = AsyncMock(return_value=mock_http.return_value)
+        mock_http.return_value.__aenter__ = AsyncMock(
+            return_value=mock_http.return_value
+        )
         mock_http.return_value.__aexit__ = AsyncMock(return_value=False)
         mock_http.return_value.get = AsyncMock(return_value=mock_response)
 
@@ -55,7 +59,9 @@ async def test_register_returns_ticket_id(client):
     mock_response.raise_for_status = MagicMock()
 
     with patch("httpx.AsyncClient") as mock_http:
-        mock_http.return_value.__aenter__ = AsyncMock(return_value=mock_http.return_value)
+        mock_http.return_value.__aenter__ = AsyncMock(
+            return_value=mock_http.return_value
+        )
         mock_http.return_value.__aexit__ = AsyncMock(return_value=False)
         mock_http.return_value.post = AsyncMock(return_value=mock_response)
 
@@ -77,7 +83,9 @@ async def test_seats_returns_list(client):
     mock_response.raise_for_status = MagicMock()
 
     with patch("httpx.AsyncClient") as mock_http:
-        mock_http.return_value.__aenter__ = AsyncMock(return_value=mock_http.return_value)
+        mock_http.return_value.__aenter__ = AsyncMock(
+            return_value=mock_http.return_value
+        )
         mock_http.return_value.__aexit__ = AsyncMock(return_value=False)
         mock_http.return_value.get = AsyncMock(return_value=mock_response)
 
@@ -93,9 +101,13 @@ async def test_unregister_returns_true(client):
     mock_response.raise_for_status = MagicMock()
 
     with patch("httpx.AsyncClient") as mock_http:
-        mock_http.return_value.__aenter__ = AsyncMock(return_value=mock_http.return_value)
+        mock_http.return_value.__aenter__ = AsyncMock(
+            return_value=mock_http.return_value
+        )
         mock_http.return_value.__aexit__ = AsyncMock(return_value=False)
-        mock_http.return_value.request = AsyncMock(return_value=mock_response)  # было delete
+        mock_http.return_value.request = AsyncMock(
+            return_value=mock_response
+        )  # было delete
 
         result = await client.unregister("event-1", "ticket-1")
 
