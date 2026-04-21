@@ -1,41 +1,80 @@
 
 
 from datetime import datetime
-from pydantic import (
-    BaseModel,
-    ConfigDict,
-    EmailStr,
-)
+from typing import Optional
 
-class PlaceResponse(BaseModel):
+from pydantic import BaseModel, EmailStr
+
+
+class PlaceSchema(BaseModel):
     id: str
     name: str
     city: str
     address: str
-    seats_pattern: str
-    changed_at: datetime
-    created_at: datetime
+    seats_pattern: Optional[str] = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = {"from_attributes": True}
 
 
-class EventResponse(BaseModel):
+class PlaceDetailSchema(PlaceSchema):
+    seats_pattern: Optional[str] = None
+
+
+class EventListItem(BaseModel):
     id: str
     name: str
-    place: PlaceResponse
-    event_time: datetime
-    registration_deadline: datetime
+    place: PlaceSchema
+    event_time: Optional[datetime] = None
+    registration_deadline: Optional[datetime] = None
     status: str
     number_of_visitors: int
-    changed_at: datetime
-    created_at: datetime
-    status_changed_at: datetime
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = {"from_attributes": True}
 
 
-class Registration(BaseModel):
+class EventDetail(BaseModel):
+    id: str
+    name: str
+    place: PlaceDetailSchema
+    event_time: Optional[datetime] = None
+    registration_deadline: Optional[datetime] = None
+    status: str
+    number_of_visitors: int
+
+    model_config = {"from_attributes": True}
+
+
+class EventsListResponse(BaseModel):
+    count: int
+    next: Optional[str] = None
+    previous: Optional[str] = None
+    results: list[EventListItem]
+
+
+class SeatsResponse(BaseModel):
+    event_id: str
+    available_seats: list[str]
+
+
+class CreateTicketRequest(BaseModel):
+    event_id: str
     first_name: str
     last_name: str
-    seat: str
     email: EmailStr
+    seat: str
+
+
+class CreateTicketResponse(BaseModel):
+    ticket_id: str
+
+
+class CancelTicketResponse(BaseModel):
+    success: bool
+
+
+class HealthResponse(BaseModel):
+    status: str
+
+
+class SyncResponse(BaseModel):
+    status: str
