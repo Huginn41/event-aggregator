@@ -3,7 +3,7 @@ from typing import Any
 
 
 from sqlalchemy import select
-from sqlalchemy.dialects.sqlite import insert
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import Event, Place, Ticket, SyncData
@@ -61,7 +61,7 @@ class EventRepository:
                 created_at=place_data.get("created_at"),
             )
             .on_conflict_do_update(
-                index_elements="id",
+                index_elements=["id"],
                 set_={
                     "name": place_data["name"],
                     "city": place_data["city"],
