@@ -22,18 +22,18 @@ from api.schemas import (
     CreateTicketResponse,
     EventDetail,
     EventsListResponse,
-    GetEventUsecase,
-    GetEventsUsecase,
-    GetSeatsUsecase,
     HealthResponse,
     SeatsResponse,
     SyncResponse,
 )
+
 from api.usecases import (
     CancelTicketUsecase,
     CreateTicketUsecase,
     EventNotFound,
     EventNotPublished,
+    GetEventUsecase,
+    GetEventsUsecase,
     GetSeatsUsecase,
     TicketNotFound,
 )
