@@ -43,7 +43,7 @@ REST API сервис для агрегации событий от внешне
 1. Скопируй `.env.template` в `.env` и заполни переменные:
 
 ```bash
-cp .env.template .env.local
+cp .env.template .env
 ```
 
 2. Укажи `EVENTS_API_KEY` в `.env`:
@@ -55,7 +55,7 @@ EVENTS_API_KEY=твой_ключ
 3. Запусти:
 
 ```bash
-docker-compose --env-file .env.local up --build
+docker-compose --env-file .env up --build
 ```
 
 Миграции применятся автоматически при старте. Сервис будет доступен на `http://localhost:8000`.
