@@ -24,6 +24,7 @@ class EventStatus(str, Enum):
     NEW = "new"
     PUBLISHED = "published"
     CANCELLED = "cancelled"
+    REGISTRATION_CLOSED = "registration_closed"
 
 
 class Place(Base):
