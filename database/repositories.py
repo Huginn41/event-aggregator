@@ -30,7 +30,7 @@ class EventRepository:
         )
         return result.scalar_one_or_none()
 
-    async def event_list(
+    async def list_events(
         self,
         date_from: datetime,
         offset: int = 0,
