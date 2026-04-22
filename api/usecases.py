@@ -3,6 +3,7 @@ import typing
 from datetime import datetime
 
 from core.cache import seats_cache
+from database.models import EventStatus
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +32,34 @@ class EventRepositoryProtocol(typing.Protocol):
         offset: int,
         limit: int,
     ) -> tuple[int, list]: ...
+
+
+class GetEventsUsecase:  # НОВЫЙ
+    def __init__(self, events: EventRepositoryProtocol) -> None:
+        self._events = events
+
+    async def do(
+        self,
+        date_from: datetime | None,
+        offset: int,
+        limit: int,
+    ) -> tuple[int, list]:
+        return await self._events.list_events(
+            date_from=date_from,
+            offset=offset,
+            limit=limit,
+        )
+
+
+class GetEventUsecase:  # НОВЫЙ
+    def __init__(self, events: EventRepositoryProtocol) -> None:
+        self._events = events
+
+    async def do(self, event_id: str):
+        event = await self._events.get(event_id)
+        if not event:
+            raise EventNotFound(event_id)
+        return event
 
 
 class TicketRepositoryProtocol(typing.Protocol):
@@ -79,7 +108,7 @@ class GetSeatsUsecase:
         if not event:
             raise EventNotFound(event_id)
 
-        if event.status != "published":
+        if event.status != EventStatus.PUBLISHED:
             raise EventNotPublished(event_id)
 
         cached = seats_cache.get(event_id)
@@ -114,7 +143,7 @@ class CreateTicketUsecase:
         if not event:
             raise EventNotFound(event_id)
 
-        if event.status != "published":
+        if event.status != EventStatus.PUBLISHED:
             raise EventNotPublished(event_id)
 
         ticket_id = await self._client.register(

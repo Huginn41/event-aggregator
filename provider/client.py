@@ -1,7 +1,7 @@
 from typing import Any
+from urllib.parse import quote, urljoin
 
 import httpx
-from urllib.parse import quote
 
 from core.config import settings
 
@@ -12,24 +12,26 @@ class EventsProviderClient:
         base_url: str | None = None,
         api_key: str | None = None,
     ) -> None:
-        self._base_url = base_url or settings.events_api_url
+        self._base_url = (base_url or settings.events_api_url).rstrip("/") + "/"
         self._api_key = api_key or settings.events_api_key
 
     def _headers(self):
         return {"x-api-key": self._api_key}
 
+    def _url(self, path: str) -> str:
+        return urljoin(self._base_url, path.lstrip("/"))
+
     async def events(
         self, changed_at: str, cursor: str | None = None
     ) -> dict[str, Any]:
-
-        encoded = quote(changed_at, safe='+:')
+        encoded = quote(changed_at, safe="+:")
         query = f"changed_at={encoded}"
         if cursor:
             query += f"&cursor={quote(cursor, safe='+:')}"
 
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{self._base_url}/api/events/?{query}",
+                self._url(f"api/events/?{query}"),
                 headers=self._headers(),
                 follow_redirects=True,
             )
@@ -49,7 +51,7 @@ class EventsProviderClient:
     async def seats(self, event_id: str) -> list[str]:
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{self._base_url}/api/events/{event_id}/seats/",
+                self._url(f"api/events/{event_id}/seats/"),
                 headers=self._headers(),
                 follow_redirects=True,
             )
@@ -65,10 +67,9 @@ class EventsProviderClient:
         email: str,
         seat: str,
     ) -> str:
-
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                f"{self._base_url}/api/events/{event_id}/register/",
+                self._url(f"api/events/{event_id}/register/"),
                 headers=self._headers(),
                 json={
                     "first_name": first_name,
@@ -86,7 +87,7 @@ class EventsProviderClient:
         async with httpx.AsyncClient() as client:
             response = await client.request(
                 method="DELETE",
-                url=f"{self._base_url}/api/events/{event_id}/unregister/",
+                url=self._url(f"api/events/{event_id}/unregister/"),
                 headers=self._headers(),
                 json={"ticket_id": ticket_id},
                 follow_redirects=True,

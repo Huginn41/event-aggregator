@@ -3,6 +3,8 @@ import logging
 from datetime import datetime
 from typing import Optional
 
+from database.db import get_session
+from database.repositories import EventRepository, TicketRepository
 from fastapi import (
     APIRouter,
     Depends,
@@ -10,29 +12,31 @@ from fastapi import (
     Request,
     status,
 )
+from provider.client import EventsProviderClient
 from sqlalchemy.ext.asyncio import AsyncSession
+from sync.sync_worker import run_sync
 
 from api.schemas import (
-    HealthResponse,
-    SyncResponse,
-    EventsListResponse,
-    EventDetail,
-    SeatsResponse,
-    CreateTicketResponse,
-    CreateTicketRequest,
     CancelTicketResponse,
+    CreateTicketRequest,
+    CreateTicketResponse,
+    EventDetail,
+    EventsListResponse,
+    GetEventUsecase,
+    GetEventsUsecase,
+    GetSeatsUsecase,
+    HealthResponse,
+    SeatsResponse,
+    SyncResponse,
 )
 from api.usecases import (
-    GetSeatsUsecase,
+    CancelTicketUsecase,
+    CreateTicketUsecase,
     EventNotFound,
     EventNotPublished,
-    CreateTicketUsecase,
-    CancelTicketUsecase,
+    GetSeatsUsecase,
     TicketNotFound,
 )
-from database.db import get_session
-from database.repositories import EventRepository, TicketRepository
-from provider.client import EventsProviderClient
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -55,7 +59,7 @@ async def health():
 
 @router.post("/sync/trigger", response_model=SyncResponse)
 async def trigger_sync():
-    from sync.sync_worker import run_sync
+
 
     asyncio.create_task(run_sync())
     return {"status": "sync started"}
@@ -69,7 +73,7 @@ async def list_events(
     page_size: int = 20,
     db: AsyncSession = Depends(get_session),
 ):
-    repo = EventRepository(db)
+
     parsed_date: Optional[datetime] = None
     if date_from:
         try:
@@ -80,7 +84,9 @@ async def list_events(
             )
 
     offset = (page - 1) * page_size
-    total, events = await repo.event_list(
+    repo = EventRepository(db)
+    usecase = GetEventsUsecase(events=repo)
+    total, events = await usecase.do(
         date_from=parsed_date, offset=offset, limit=page_size
     )
 
@@ -123,8 +129,10 @@ async def list_events(
 @router.get("/events/{event_id}", response_model=EventDetail)
 async def get_event(event_id: str, db: AsyncSession = Depends(get_session)):
     repo = EventRepository(db)
-    event = await repo.get(event_id)
-    if not event:
+    usecase = GetEventUsecase(events=repo)
+    try:
+        event = await usecase.do(event_id)
+    except EventNotFound:
         raise HTTPException(status_code=404, detail="Event not found")
 
     return {

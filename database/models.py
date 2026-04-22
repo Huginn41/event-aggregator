@@ -1,5 +1,7 @@
 from datetime import datetime
 import uuid
+from enum import Enum
+
 from sqlalchemy import (
     DateTime,
     String,
@@ -16,6 +18,12 @@ from sqlalchemy.orm import (
 )
 
 from database.db import Base
+
+
+class EventStatus(str, Enum):
+    NEW = "new"
+    PUBLISHED = "published"
+    CANCELLED = "cancelled"
 
 
 class Place(Base):
@@ -66,7 +74,7 @@ class Event(Base):
         DateTime(timezone=True),
         nullable=False,
     )
-    status: Mapped[str] = mapped_column(String, nullable=False)
+    status: Mapped[EventStatus] = mapped_column(String, nullable=False)
     number_of_visitors: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     changed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

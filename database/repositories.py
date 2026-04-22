@@ -1,13 +1,12 @@
 from datetime import datetime
 from typing import Any
 
-
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
+from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from database.models import Event, Place, Ticket, SyncData
+from database.models import Event, Place, SyncData, Ticket, EventStatus
 
 
 def parse_dt(value: str | None) -> datetime | None:
@@ -45,7 +44,7 @@ class EventRepository:
             query = query.where(Event.event_time >= date_from)
             count_query = count_query.where(Event.event_time >= date_from)
 
-        from sqlalchemy import func
+
 
         result_count = await self._session.execute(
             select(func.count()).select_from(count_query.subquery())
@@ -95,7 +94,7 @@ class EventRepository:
                 place_id=place_data["id"],
                 event_time=parse_dt(event_data.get("event_time")),
                 registration_deadline=parse_dt(event_data.get("registration_deadline")),
-                status=event_data.get("status", "new"),
+                status=event_data.get("status", EventStatus.NEW),
                 number_of_visitors=event_data.get("number_of_visitors", 0),
                 changed_at=parse_dt(event_data.get("changed_at")),
                 created_at=parse_dt(event_data.get("created_at")),
@@ -108,7 +107,7 @@ class EventRepository:
                     "place_id": place_data["id"],
                     "event_time": parse_dt(event_data.get("event_time")),
                     "registration_deadline": parse_dt(event_data.get("registration_deadline")),
-                    "status": event_data.get("status", "new"),
+                    "status": event_data.get("status", EventStatus.NEW),
                     "number_of_visitors": event_data.get("number_of_visitors", 0),
                     "changed_at": parse_dt(event_data.get("changed_at")),
                     "status_changed_at": parse_dt(event_data.get("status_changed_at")),

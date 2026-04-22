@@ -1,14 +1,12 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
-
-import asyncio
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from api.router import router
-
 from sync.sync_worker import run_sync
 
 logging.basicConfig(level=logging.INFO)
