@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, EmailStr
-from database.models import EventStatus
+#from database.models import EventStatus
 
 class PlaceSchema(BaseModel):
     id: str
@@ -24,7 +24,7 @@ class EventListItem(BaseModel):
     place: PlaceSchema
     event_time: Optional[datetime] = None
     registration_deadline: Optional[datetime] = None
-    status: EventStatus
+    status: str
     number_of_visitors: int
 
     model_config = {"from_attributes": True}
@@ -36,7 +36,7 @@ class EventDetail(BaseModel):
     place: PlaceDetailSchema
     event_time: Optional[datetime] = None
     registration_deadline: Optional[datetime] = None
-    status: EventStatus
+    status: str
     number_of_visitors: int
 
     model_config = {"from_attributes": True}
