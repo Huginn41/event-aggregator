@@ -1,6 +1,20 @@
 # Events Aggregator
 
-REST API сервис для агрегации событий от внешнего провайдера. Синхронизирует данные о мероприятиях и местах проведения, предоставляет API для просмотра событий, получения мест и регистрации билетов.
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-async-green)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
+![Docker](https://img.shields.io/badge/Docker-compose-blue)
+![Tests](https://img.shields.io/badge/tests-pytest-green)
+
+REST API сервис для агрегации мероприятий от внешнего провайдера.
+Автоматически синхронизирует события по расписанию, предоставляет 
+пагинированный API для просмотра мероприятий и управления билетами.
+
+**Ключевые решения:**
+- Фоновая синхронизация через `asyncio` — не блокирует основной поток
+- Repository pattern — бизнес-логика отделена от слоя данных
+- Интеграционные тесты покрывают все эндпоинты
+- CI/CD через GitHub Actions
 
 ## Стек
 
